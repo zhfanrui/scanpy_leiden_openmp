@@ -19,10 +19,6 @@ dependencies = [
   "scanpy>=1.10",
   "anndata>=0.10",
   "scikit-learn>=1.4",
-]
-
-[project.optional-dependencies]
-scanpy = [
   "leidenalg>=0.10",
   "igraph>=0.11",
 ]
