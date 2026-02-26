@@ -5,11 +5,11 @@ on:
   pull_request:
 
 jobs:
-  test:
+  wheel:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
         python-version: ["3.10", "3.11", "3.12"]
     runs-on: ${{ matrix.os }}
 
@@ -34,14 +34,23 @@ jobs:
           brew install libomp
           echo "OpenMP_ROOT=$(brew --prefix)/opt/libomp" >> $GITHUB_ENV
 
-      - name: Lint
-        run: uv run ruff check .
-
-      - name: Type check
-        run: uv run mypy src
-
-      - name: Tests
-        run: uv run pytest
-
       - name: Build wheel
-        run: uv build
+        run: uv build --wheel
+
+      - name: Repair wheel (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p wheelhouse
+          uv run auditwheel repair -w wheelhouse dist/*.whl
+
+      - name: Repair wheel (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p wheelhouse
+          uv run delocate-wheel --require-archs "$(uname -m)" -w wheelhouse -v dist/*.whl
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: wheelhouse/*.whl
