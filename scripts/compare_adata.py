@@ -118,7 +118,11 @@ def save_visualization(adata, *, baseline_key: str, patch_key: str, output_png: 
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Compare Scanpy leidenalg vs OpenMP backend on the same AnnData.")
+    parser = argparse.ArgumentParser(
+        description=(
+            "Compare Scanpy leidenalg vs OpenMP backend on the same AnnData."
+        )
+    )
     parser.add_argument("--h5ad", required=True, help="Path to .h5ad file")
     parser.add_argument("--resolution", type=float, default=1.0)
     parser.add_argument("--random-state", type=int, default=0)
@@ -133,7 +137,11 @@ def main() -> None:
         action="store_true",
         help="After OpenMP result, run one igraph refine pass with initial membership.",
     )
-    parser.add_argument("--strict", action="store_true", help="Fail if OpenMP backend is unavailable")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Fail if OpenMP backend is unavailable",
+    )
     parser.add_argument(
         "--out-plot",
         default="compare_leiden_umap.png",
@@ -174,7 +182,11 @@ def main() -> None:
 
     ari = adjusted_rand_score(baseline.labels, patched_openmp.labels)
     nmi = normalized_mutual_info_score(baseline.labels, patched_openmp.labels)
-    speedup = baseline.elapsed_s / patched_openmp.elapsed_s if patched_openmp.elapsed_s > 0 else float("inf")
+    speedup = (
+        baseline.elapsed_s / patched_openmp.elapsed_s
+        if patched_openmp.elapsed_s > 0
+        else float("inf")
+    )
 
     adata.obs["_baseline_leiden"] = baseline.labels.astype(str)
     adata.obs["_patch_openmp_leiden"] = patched_openmp.labels.astype(str)

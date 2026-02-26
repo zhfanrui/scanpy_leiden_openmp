@@ -14,7 +14,7 @@ class FakeAnnData:
         self.uns = {"neighbors": {"connectivities_key": "connectivities"}}
         self.obs = pd.DataFrame(index=np.arange(graph.shape[0]))
 
-    def copy(self) -> "FakeAnnData":
+    def copy(self) -> FakeAnnData:
         copied = FakeAnnData(self.obsp["connectivities"].copy())
         copied.uns = {k: (v.copy() if isinstance(v, dict) else v) for k, v in self.uns.items()}
         copied.obs = self.obs.copy(deep=True)

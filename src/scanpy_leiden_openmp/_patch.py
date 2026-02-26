@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from types import ModuleType
-from typing import Any, Callable, Optional
+from typing import Any
 
 from ._api import leiden
 
-_ORIGINAL_SCANPY_LEIDEN: Optional[Callable[..., Any]] = None
+_ORIGINAL_SCANPY_LEIDEN: Callable[..., Any] | None = None
 _IS_PATCHED = False
 
 

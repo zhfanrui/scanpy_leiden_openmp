@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+import warnings
 from collections.abc import Callable
 from copy import deepcopy
-from typing import Any, Optional
-import warnings
+from typing import Any
 
 import numpy as np
 import scipy.sparse as sp
@@ -26,7 +26,7 @@ def _extract_graph(
     adata_or_graph: Any,
     *,
     neighbors_key: str,
-    obsp: Optional[str],
+    obsp: str | None,
 ) -> tuple[sp.csr_matrix, bool]:
     if _is_adata_like(adata_or_graph):
         adata = adata_or_graph
@@ -62,12 +62,12 @@ def _set_uns_params(adata: Any, params: dict[str, Any]) -> None:
         leiden_block["params"] = params
 
 
-def _resolve_seed(random_state: Optional[int]) -> int:
+def _resolve_seed(random_state: int | None) -> int:
     return 0 if random_state is None else int(random_state)
 
 
 def _do_fallback_scanpy(
-    fallback: Optional[Callable[..., Any]],
+    fallback: Callable[..., Any] | None,
     adata: Any,
     kwargs: dict[str, Any],
 ) -> Any:
@@ -80,19 +80,19 @@ def leiden(
     adata_or_graph: Any,
     *,
     resolution: float = 1.0,
-    random_state: Optional[int] = 0,
+    random_state: int | None = 0,
     key_added: str = "leiden",
     neighbors_key: str = "neighbors",
-    obsp: Optional[str] = None,
+    obsp: str | None = None,
     copy: bool = False,
     n_iterations: int = -1,
-    partition_type: Optional[Any] = None,
+    partition_type: Any | None = None,
     backend: str = "openmp",
-    n_threads: Optional[int] = None,
+    n_threads: int | None = None,
     refine_with_igraph: bool = False,
     strict: bool = False,
     return_quality: bool = False,
-    _scanpy_fallback: Optional[Callable[..., Any]] = None,
+    _scanpy_fallback: Callable[..., Any] | None = None,
     **kwargs: Any,
 ) -> Any:
     """
@@ -183,7 +183,10 @@ def leiden(
         except Exception as exc:
             if strict:
                 raise
-            warnings.warn(f"OpenMP backend failed, trying igraph/leidenalg fallback: {exc}", stacklevel=2)
+            warnings.warn(
+                f"OpenMP backend failed, trying igraph/leidenalg fallback: {exc}",
+                stacklevel=2,
+            )
             try:
                 result = run_igraph_backend(
                     graph,
@@ -211,7 +214,10 @@ def leiden(
                         **kwargs,
                     )
                     return _do_fallback_scanpy(_scanpy_fallback, target, fb_kwargs)
-                warnings.warn(f"igraph fallback failed, fallback to python backend: {ig_exc}", stacklevel=2)
+                warnings.warn(
+                    f"igraph fallback failed, fallback to python backend: {ig_exc}",
+                    stacklevel=2,
+                )
                 result = run_python_backend(
                     graph,
                     resolution=float(resolution),

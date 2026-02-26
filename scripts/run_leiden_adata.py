@@ -22,17 +22,29 @@ def default_output_h5ad(input_h5ad: Path) -> Path:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Read AnnData, run Leiden, and write outputs.")
     parser.add_argument("--h5ad", required=True, help="Input .h5ad path")
-    parser.add_argument("--output-h5ad", default=None, help="Output .h5ad path (default: <input>.leiden.h5ad)")
+    parser.add_argument(
+        "--output-h5ad",
+        default=None,
+        help="Output .h5ad path (default: <input>.leiden.h5ad)",
+    )
     parser.add_argument("--output-csv", default=None, help="Optional cluster CSV output path")
     parser.add_argument("--key-added", default="leiden", help="obs column name to store clusters")
     parser.add_argument("--resolution", type=float, default=1.0)
     parser.add_argument("--random-state", type=int, default=0)
     parser.add_argument("--n-iterations", type=int, default=-1)
     parser.add_argument("--neighbors-key", default="neighbors")
-    parser.add_argument("--obsp", default=None, help="Graph key in adata.obsp; if set, skip auto neighbors")
+    parser.add_argument(
+        "--obsp",
+        default=None,
+        help="Graph key in adata.obsp; if set, skip auto neighbors",
+    )
     parser.add_argument("--n-neighbors", type=int, default=15)
     parser.add_argument("--n-pcs", type=int, default=50)
-    parser.add_argument("--backend", choices=["openmp", "igraph", "python", "leidenalg"], default="openmp")
+    parser.add_argument(
+        "--backend",
+        choices=["openmp", "igraph", "python", "leidenalg"],
+        default="openmp",
+    )
     parser.add_argument("--n-threads", type=int, default=None)
     parser.add_argument("--refine-with-igraph", action="store_true")
     parser.add_argument("--strict", action="store_true")

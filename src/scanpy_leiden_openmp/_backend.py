@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 import numpy as np
 import scipy.sparse as sp
-
 
 try:
     from . import _core  # type: ignore[attr-defined]
@@ -33,7 +31,7 @@ def run_openmp_backend(
     n_iterations: int,
     directed: bool,
     weighted: bool,
-    n_threads: Optional[int],
+    n_threads: int | None,
 ) -> LeidenResult:
     """Run the compiled OpenMP backend."""
     if _core is None:
@@ -88,7 +86,7 @@ def run_igraph_backend(
     n_iterations: int,
     directed: bool,
     weighted: bool,
-    initial_membership: Optional[np.ndarray] = None,
+    initial_membership: np.ndarray | None = None,
 ) -> LeidenResult:
     """
     Run igraph/leidenalg backend.
@@ -115,7 +113,11 @@ def run_igraph_backend(
         cols = np.asarray(coo.col[mask], dtype=np.int64)
         vals = np.asarray(coo.data[mask], dtype=np.float64)
 
-    g = ig.Graph(n=graph.shape[0], edges=list(zip(rows.tolist(), cols.tolist())), directed=directed)
+    g = ig.Graph(
+        n=graph.shape[0],
+        edges=list(zip(rows.tolist(), cols.tolist(), strict=False)),
+        directed=directed,
+    )
     weights = vals.tolist() if weighted else None
     membership = None
     if initial_membership is not None:

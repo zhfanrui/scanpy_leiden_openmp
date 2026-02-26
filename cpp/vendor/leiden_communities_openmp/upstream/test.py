@@ -1,7 +1,7 @@
 import os
+
 import igraph as ig
 import leidenalg
-
 
 # Load graph
 file = os.path.expanduser('~/Data/asia_osm.edgelist')

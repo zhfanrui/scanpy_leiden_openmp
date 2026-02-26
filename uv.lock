@@ -1794,6 +1794,8 @@ source = { editable = "." }
 dependencies = [
     { name = "anndata", version = "0.11.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "anndata", version = "0.12.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "igraph" },
+    { name = "leidenalg" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.4.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "packaging" },
@@ -1807,12 +1809,6 @@ dependencies = [
     { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
 ]
 
-[package.optional-dependencies]
-scanpy = [
-    { name = "igraph" },
-    { name = "leidenalg" },
-]
-
 [package.dev-dependencies]
 dev = [
     { name = "mypy" },
@@ -1824,8 +1820,8 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "anndata", specifier = ">=0.10" },
-    { name = "igraph", marker = "extra == 'scanpy'", specifier = ">=0.11" },
-    { name = "leidenalg", marker = "extra == 'scanpy'", specifier = ">=0.10" },
+    { name = "igraph", specifier = ">=0.11" },
+    { name = "leidenalg", specifier = ">=0.10" },
     { name = "numpy", specifier = ">=1.24" },
     { name = "packaging", specifier = ">=23.0" },
     { name = "pandas", specifier = ">=2.0" },
@@ -1833,7 +1829,6 @@ requires-dist = [
     { name = "scikit-learn", specifier = ">=1.4" },
     { name = "scipy", specifier = ">=1.10" },
 ]
-provides-extras = ["scanpy"]
 
 [package.metadata.requires-dev]
 dev = [
