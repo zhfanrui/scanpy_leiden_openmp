@@ -38,18 +38,17 @@ py::tuple run_leiden_csr(py::array_t<std::int64_t, py::array::c_style | py::arra
   std::memcpy(indices_v.data(), indices_buf.ptr, static_cast<std::size_t>(indices_buf.size) * sizeof(std::int64_t));
   std::memcpy(data_v.data(), data_buf.ptr, static_cast<std::size_t>(data_buf.size) * sizeof(double));
 
-  slo::LeidenInput input{
-      .n_nodes = n_nodes,
-      .indptr = std::move(indptr_v),
-      .indices = std::move(indices_v),
-      .data = std::move(data_v),
-      .resolution = resolution,
-      .seed = seed,
-      .n_iterations = n_iterations,
-      .directed = directed,
-      .weighted = weighted,
-      .n_threads = n_threads,
-  };
+  slo::LeidenInput input{};
+  input.n_nodes = n_nodes;
+  input.indptr = std::move(indptr_v);
+  input.indices = std::move(indices_v);
+  input.data = std::move(data_v);
+  input.resolution = resolution;
+  input.seed = seed;
+  input.n_iterations = n_iterations;
+  input.directed = directed;
+  input.weighted = weighted;
+  input.n_threads = n_threads;
 
   const auto out = slo::run_leiden(input);
 

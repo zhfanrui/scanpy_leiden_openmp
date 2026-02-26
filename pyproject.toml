@@ -33,7 +33,7 @@ dev = [
 
 [tool.scikit-build]
 wheel.packages = ["src/scanpy_leiden_openmp"]
-cmake.minimum-version = "3.18"
+cmake.version = ">=3.18"
 cmake.build-type = "Release"
 build-dir = "build/{wheel_tag}"
 
@@ -52,4 +52,3 @@ select = ["E", "F", "I", "UP", "B"]
 python_version = "3.10"
 ignore_missing_imports = true
 strict_optional = true
-

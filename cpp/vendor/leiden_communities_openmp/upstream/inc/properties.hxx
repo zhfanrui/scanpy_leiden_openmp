@@ -96,11 +96,12 @@ template <class G>
 inline double edgeWeightOmp(const G& x) {
   using K = typename G::key_type;
   double a = 0;
-  size_t S = x.span();
-  #pragma omp parallel for schedule(auto) reduction(+:a)
-  for (K u=0; u<S; ++u) {
-    if (!x.hasVertex(u)) continue;
-    a += edgeWeight(x, u);
+  auto S = static_cast<std::int64_t>(x.span());
+  #pragma omp parallel for schedule(static) reduction(+:a)
+  for (std::int64_t u=0; u<S; ++u) {
+    K uk = static_cast<K>(u);
+    if (!x.hasVertex(uk)) continue;
+    a += edgeWeight(x, uk);
   }
   return a;
 }
@@ -157,10 +158,10 @@ template <class V>
 inline double modularityCommunitiesOmp(const vector<V>& cin, const vector<V>& ctot, double M, double R=1) {
   ASSERT(M>0 && R>0);
   double a = 0;
-  size_t C = cin.size();
+  auto C = static_cast<std::int64_t>(cin.size());
   #pragma omp parallel for schedule(static) reduction(+:a)
-  for (size_t i=0; i<C; ++i)
-    a += modularityCommunity(cin[i], ctot[i], M, R);
+  for (std::int64_t i=0; i<C; ++i)
+    a += modularityCommunity(cin[static_cast<size_t>(i)], ctot[static_cast<size_t>(i)], M, R);
   return a;
 }
 #endif
@@ -205,29 +206,31 @@ template <class G, class FC>
 inline double modularityByOmp(const G& x, FC fc, double M, double R=1) {
   using  K = typename G::key_type;
   ASSERT(M>0 && R>0);
-  size_t S = x.span();
+  auto S = static_cast<std::int64_t>(x.span());
   vector<double> vin(S), vtot(S);
   vector<double> cin(S), ctot(S);
   // Compute the internal and total weight of each vertex.
   #pragma omp parallel for schedule(dynamic, 2048)
-  for (K u=0; u<S; ++u) {
-    if (!x.hasVertex(u)) continue;
-    K c = fc(u);
-    x.forEachEdge(u, [&](auto v, auto w) {
+  for (std::int64_t u=0; u<S; ++u) {
+    K uk = static_cast<K>(u);
+    if (!x.hasVertex(uk)) continue;
+    K c = fc(uk);
+    x.forEachEdge(uk, [&](auto v, auto w) {
       K d = fc(v);
-      if (c==d) vin[u] += w;
-      vtot[u] += w;
+      if (c==d) vin[static_cast<size_t>(u)] += w;
+      vtot[static_cast<size_t>(u)] += w;
     });
   }
   // Compute the internal and total weight of each community.
   #pragma omp parallel for schedule(static, 2048)
-  for (K u=0; u<S; ++u) {
-    if (!x.hasVertex(u)) continue;
-    K c = fc(u);
+  for (std::int64_t u=0; u<S; ++u) {
+    K uk = static_cast<K>(u);
+    if (!x.hasVertex(uk)) continue;
+    K c = fc(uk);
     #pragma omp atomic
-    cin[c]  += vin[u];
+    cin[c]  += vin[static_cast<size_t>(u)];
     #pragma omp atomic
-    ctot[c] += vtot[u];
+    ctot[c] += vtot[static_cast<size_t>(u)];
   }
   return modularityCommunitiesOmp(cin, ctot, M, R);
 }
@@ -287,12 +290,13 @@ inline vector<K> communitySize(const G& x, const vector<K>& vcom) {
  */
 template <class G, class K>
 inline vector<K> communitySizeOmp(const G& x, const vector<K>& vcom) {
-  size_t S = x.span();
+  auto S = static_cast<std::int64_t>(x.span());
   vector<K> a(S);
   #pragma omp parallel for schedule(static, 2048)
-  for (K u=0; u<S; ++u) {
-    if (!x.hasVertex(u)) continue;
-    K c = vcom[u];
+  for (std::int64_t u=0; u<S; ++u) {
+    K uk = static_cast<K>(u);
+    if (!x.hasVertex(uk)) continue;
+    K c = vcom[static_cast<size_t>(u)];
     #pragma omp atomic
     ++a[c];
   }
