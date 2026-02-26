@@ -1,0 +1,9 @@
+* text=auto eol=lf
+
+# Binary artifacts
+*.so binary
+*.pyd binary
+*.dll binary
+*.dylib binary
+*.whl binary
+*.tar.gz binary
